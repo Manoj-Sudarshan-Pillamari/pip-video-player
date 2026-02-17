@@ -3,46 +3,44 @@ import axios from "axios";
 import { PipVideoPlayer } from "./PipVideoPlayer";
 import "./PipVideoPlayer.css";
 
-const API_URL = import.meta.env.VITE_POPULAR_BRANDS_API_URL;
+const API_URL = import.meta.env.VITE_PIP_VIDEOS_API_URL;
 
 export default function App() {
-  console.log(import.meta.env.VITE_POPULAR_BRANDS_API_URL, "URLLLLLLLL");
   const [mediaData, setMediaData] = useState([]);
   const [isDataReady, setIsDataReady] = useState(false);
 
   useEffect(() => {
-    const fetchPopularBrands = async () => {
+    const fetchPipVideos = async () => {
       try {
         const res = await axios.get(API_URL);
-        const brands = res?.data?.data;
+        const videos = res?.data?.data;
 
-        if (!brands || !Array.isArray(brands) || brands.length === 0) {
+        if (!videos || !Array.isArray(videos) || videos.length === 0) {
           setMediaData([]);
           setIsDataReady(true);
           return;
         }
 
-        const transformedData = brands.map((brand) => ({
-          id: brand._id,
-          src: brand.media?.url || "",
-          type: brand.media?.type || "video",
-          redirectUrl: brand.link || "",
-          rank: brand.rank,
+        const transformedData = videos.map((item) => ({
+          id: item._id,
+          src: item.media?.url || "",
+          type: item.media?.type || "video",
+          redirectUrl: item.link || "",
+          rank: item.rank,
         }));
 
-        // Filter out items with no valid source
         const validData = transformedData.filter((item) => item.src);
 
         setMediaData(validData);
       } catch (err) {
-        console.error("Failed to fetch popular brands:", err);
+        console.error("Failed to fetch PiP videos:", err);
         setMediaData([]);
       } finally {
         setIsDataReady(true);
       }
     };
 
-    fetchPopularBrands();
+    fetchPipVideos();
   }, []);
 
   const handlePlayerClose = () => {
@@ -54,16 +52,8 @@ export default function App() {
       <div className="content-wrapper">
         <h1 className="main-title">PiP Video Player App</h1>
         <p className="main-description">
-          Why do we use it? It is a long established fact that a reader will be
-          distracted by the readable content of a page when looking at its
-          layout. The point of using Lorem Ipsum is that it has a more-or-less
-          normal distribution of letters, as opposed to using 'Content here,
-          content here', making it look like readable English. Many desktop
-          publishing packages and web page editors now use Lorem Ipsum as their
-          default model text, and a search for 'lorem ipsum' will uncover many
-          web sites still in their infancy. Various versions have evolved over
-          the years, sometimes by accident, sometimes on purpose (injected
-          humour and the like).
+          This is the PiP Video Player application. Videos are loaded from the
+          backend API and displayed in a floating picture-in-picture player.
         </p>
       </div>
 
