@@ -13,12 +13,11 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
   const autoAdvanceTimerRef = useRef(null);
   const containerRef = useRef(null);
 
-  const isValidMedia = media && Array.isArray(media) && media.length > 0;
+  const isValidMedia = media && Array.isArray(media) && media?.length > 0;
   const currentItem = isValidMedia ? media[currentIndex] : null;
   const isVideo = currentItem?.type === "video";
   const isImage = currentItem?.type === "image" || currentItem?.type === "gif";
 
-  // Clear auto-advance timer
   const clearAutoAdvance = useCallback(() => {
     if (autoAdvanceTimerRef.current) {
       clearTimeout(autoAdvanceTimerRef.current);
@@ -26,17 +25,15 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
     }
   }, []);
 
-  // Start auto-advance timer for images/gifs
   const startAutoAdvance = useCallback(() => {
     clearAutoAdvance();
-    if (media.length <= 1) return;
+    if (media?.length <= 1) return;
 
     autoAdvanceTimerRef.current = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % media.length);
+      setCurrentIndex((prev) => (prev + 1) % media?.length);
     }, 3000);
   }, [media.length, clearAutoAdvance]);
 
-  // Handle video events
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !isVisible || !isVideo || !currentItem) return;
@@ -69,8 +66,8 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
     };
 
     const handleVideoEnd = () => {
-      if (media.length > 1) {
-        setCurrentIndex((prev) => (prev + 1) % media.length);
+      if (media?.length > 1) {
+        setCurrentIndex((prev) => (prev + 1) % media?.length);
       }
     };
 
@@ -89,7 +86,6 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
     };
   }, [currentIndex, isVisible, isVideo, currentItem, media.length]);
 
-  // Handle image/gif loading and auto-advance
   useEffect(() => {
     if (!isVisible || !isImage || !currentItem) return;
 
@@ -125,7 +121,6 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
     startAutoAdvance,
   ]);
 
-  // Pause video when hidden
   useEffect(() => {
     const video = videoRef.current;
     if (!isVisible) {
@@ -138,7 +133,6 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
     }
   }, [isVisible, clearAutoAdvance]);
 
-  // Cleanup on unmount
   useEffect(() => {
     const video = videoRef.current;
     return () => {
@@ -172,7 +166,7 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
       e?.stopPropagation();
       if (!isValidMedia) return;
       clearAutoAdvance();
-      setCurrentIndex((prev) => (prev === 0 ? media.length - 1 : prev - 1));
+      setCurrentIndex((prev) => (prev === 0 ? media?.length - 1 : prev - 1));
     },
     [media.length, isValidMedia, clearAutoAdvance]
   );
@@ -182,7 +176,7 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
       e?.stopPropagation();
       if (!isValidMedia) return;
       clearAutoAdvance();
-      setCurrentIndex((prev) => (prev === media.length - 1 ? 0 : prev + 1));
+      setCurrentIndex((prev) => (prev === media?.length - 1 ? 0 : prev + 1));
     },
     [media.length, isValidMedia, clearAutoAdvance]
   );
@@ -214,7 +208,6 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
             .catch((err) => console.log("Retry play prevented:", err));
         }
       } else {
-        // Re-trigger image loading by forcing state change
         const tempIndex = currentIndex;
         setCurrentIndex(-1);
         setTimeout(() => setCurrentIndex(tempIndex), 50);
@@ -233,7 +226,7 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
           <CrossIcon width="16px" height="16px" />
         </button>
 
-        {media.length > 1 && (
+        {media?.length > 1 && (
           <button
             onClick={handlePrev}
             className="pip-carousel-button pip-carousel-button-left"
@@ -242,7 +235,7 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
           </button>
         )}
 
-        {media.length > 1 && (
+        {media?.length > 1 && (
           <button
             onClick={handleNext}
             className="pip-carousel-button pip-carousel-button-right"
@@ -252,7 +245,6 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
         )}
 
         <div onClick={handleMediaClick} className="pip-video-wrapper">
-          {/* Video element — hidden when showing image/gif */}
           <video
             ref={videoRef}
             className="pip-video-element"
@@ -262,10 +254,9 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
             playsInline
           />
 
-          {/* Image/GIF element */}
           {isImage && !hasError && (
             <img
-              src={currentItem.src}
+              src={currentItem?.src}
               alt="Popular brand"
               className="pip-video-element"
               style={{
@@ -275,14 +266,12 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
             />
           )}
 
-          {/* Loading spinner */}
           {isLoading && !hasError && (
             <div className="pip-video-loader">
               <div className="pip-spinner"></div>
             </div>
           )}
 
-          {/* Error state */}
           {hasError && (
             <div className="pip-video-error">
               <div className="pip-error-content">
@@ -296,10 +285,9 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
             </div>
           )}
 
-          {/* Carousel dots */}
-          {media.length > 1 && (
+          {media?.length > 1 && (
             <div className="pip-carousel-dots">
-              {media.map((_, index) => (
+              {media?.map((_, index) => (
                 <button
                   key={index}
                   onClick={(e) => handleDotClick(e, index)}

@@ -15,21 +15,21 @@ export default function App() {
         const res = await axios.get(API_URL);
         const videos = res?.data?.data;
 
-        if (!videos || !Array.isArray(videos) || videos.length === 0) {
+        if (!videos || !Array.isArray(videos) || videos?.length === 0) {
           setMediaData([]);
           setIsDataReady(true);
           return;
         }
 
-        const transformedData = videos.map((item) => ({
+        const transformedData = videos?.map((item) => ({
           id: item._id,
           src: item.media?.url || "",
           type: item.media?.type || "video",
-          redirectUrl: item.link || "",
-          rank: item.rank,
+          redirectUrl: item?.link || "",
+          rank: item?.rank,
         }));
 
-        const validData = transformedData.filter((item) => item.src);
+        const validData = transformedData?.filter((item) => item?.src);
 
         setMediaData(validData);
       } catch (err) {
@@ -57,7 +57,7 @@ export default function App() {
         </p>
       </div>
 
-      {isDataReady && mediaData.length > 0 && (
+      {isDataReady && mediaData?.length > 0 && (
         <PipVideoPlayer media={mediaData} onClose={handlePlayerClose} />
       )}
     </div>
