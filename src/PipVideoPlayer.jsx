@@ -31,7 +31,7 @@ export const PipVideoPlayer = ({ media = [], onClose }) => {
 
     autoAdvanceTimerRef.current = setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % media?.length);
-    }, 3000);
+    }, 10000);
   }, [media.length, clearAutoAdvance]);
 
   useEffect(() => {
